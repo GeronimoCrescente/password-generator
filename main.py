@@ -3,39 +3,58 @@
 
 import tkinter
 import generator
+import pyperclip
 
 
 def main():
+
+    def copy_to_clipboard(password):
+        pyperclip.copy(password)
+
     def show_password(large, special_cht, num, cap_letters):
         # definition of the second screen to show the password
 
-        pass_root = tkinter.Toplevel()
-        pass_root.title('Password')
-        pass_root.geometry("400x225")
+        if large <= 0:
+            error_message()
+        else:
+            pass_root = tkinter.Toplevel()
+            pass_root.title('Password')
+            pass_root.geometry('400x225')
 
-        if large is None or large == 0:
-            pass_root.destroy()
+            password_frame = tkinter.Frame(pass_root)
+            password_frame.pack()
 
-        password_frame = tkinter.Frame(pass_root)
-        password_frame.pack()
+            # invocation of the function that generates the password
 
-        # invocation of the function that generates the password
+            password = generator.generate(large, special_cht, num, cap_letters)
 
-        password = generator.generate(large, special_cht, num, cap_letters)
+            # password window definition
 
-        # password window definition
+            success_message = tkinter.Label(password_frame, text='The password was generated correctly',
+                                            justify='center',
+                                            font=20).grid(row=0, column=1)
 
-        success_message = tkinter.Label(password_frame, text='The password was generated correctly', justify='center',
-                                        font=20).grid(row=0, column=1)
+            password_label = tkinter.Label(password_frame, text=password, justify='center').grid(row=2, column=1)
 
-        password_label = tkinter.Label(password_frame, text=password, justify='center').grid(row=1, column=1)
+            exit_button = tkinter.Button(password_frame, text='Exit', justify='center', command=pass_root.destroy) \
+                .grid(row=3, column=0, pady=20)
+            copy_button = tkinter.Button(password_frame, text='Copy', justify='center', command=copy_to_clipboard(password)) \
+                .grid(row=3, column=2, pady=20)
 
-        exit_button = tkinter.Button(password_frame, text='Exit', justify='center', command=pass_root.destroy) \
-            .grid(row=2, column=0, pady=20)
-        save_button = tkinter.Button(password_frame, text='Save', justify='center') \
-            .grid(row=2, column=1, pady=20)
-        copy_button = tkinter.Button(password_frame, text='Copy', justify='center') \
-            .grid(row=2, column=2, pady=20)
+    def error_message():
+
+        error_root = tkinter.Toplevel()
+        error_root.title('Error')
+        error_root.geometry('400x225')
+
+        error_frame = tkinter.Frame(error_root)
+        error_frame.pack()
+
+        tkinter.Label(error_frame, text='ERROR!', justify='center', font=20, fg='red').grid(row=1, column=2, pady=10)
+        tkinter.Label(error_frame, text='The value entered in the box is not valid').grid(row=2, column=2, pady=10)
+        tkinter.Label(error_frame, text='Try again!').grid(row=3, column=2, pady=10)
+        tkinter.Button(error_frame, text='Accept', justify='center', command=error_root.destroy) \
+            .grid(row=4, column=2, pady=20)
 
     # definition of the root screen witch contains the components
     root = tkinter.Tk()
